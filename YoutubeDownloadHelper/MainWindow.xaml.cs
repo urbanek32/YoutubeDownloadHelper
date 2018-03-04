@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace YoutubeDownloadHelper
 {
@@ -21,48 +13,64 @@ namespace YoutubeDownloadHelper
     /// </summary>
     public partial class MainWindow : Window
     {
+        public ProcessHelper ProcessHelper { get; set; }
+        public ObservableCollection<FileData> Files { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
+
+            ProcessHelper = new ProcessHelper(OutputDataReceived, ErrorDataReceived);
+            Files = new ObservableCollection<FileData>();
+            this.DataContext = Files;
         }
 
-        private void btn1_Click(object sender, RoutedEventArgs e)
+        private void ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Run_cmd();
+            Log(e.Data);
         }
 
-        private void Run_cmd()
+        private void OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            var start = new Process
-            {
-                StartInfo =
-                {
-                    FileName = "C:\\Users\\Patryk\\Desktop\\youtube-dl.exe",
-                    Arguments = "--newline https://www.youtube.com/watch?v=SewpndxZDl0",
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true
-                }
-            };
-
-            start.OutputDataReceived += Start_OutputDataReceived;
-            start.ErrorDataReceived += Start_ErrorDataReceived;
-
-            start.Start();
-            start.BeginOutputReadLine();
+            Log(e.Data);
         }
 
-        private void Start_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void Start_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        private void Log(string text)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                textBlock1.Text += Environment.NewLine + e.Data;
+                LogTextBlock.Text += Environment.NewLine + text;
             }));
+        }
+
+        private async void DownloadBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var youtubeUrl = FileUrlTextBox.Text;
+            if (string.IsNullOrWhiteSpace(youtubeUrl))
+            {
+                MessageBox.Show(this, "Wrong URL", null, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var fileToAdd = new FileData
+            {
+                FileUrl = youtubeUrl,
+                FileStatus = FileStatus.ResolvingTitle
+            };
+
+            Files.Add(fileToAdd);
+
+            await ProcessHelper.GetFileTitle(fileToAdd.FileUrl)
+                .ContinueWith(t =>
+                {
+                    var res = t.Result;
+                    fileToAdd.Filename = res;
+                    fileToAdd.FileStatus = FileStatus.Downloading;
+                })
+                .ContinueWith(task =>
+                {
+                    ProcessHelper.DownloadFile(fileToAdd);
+                });
         }
     }
 }

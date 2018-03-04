@@ -5,12 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:YoutubeDownloadHelper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="YouTube Download Helper" Height="492.059" Width="720.588">
+    <Window.Resources>
+        <local:StatusVisibilityConverter x:Key="StatusVisibilityConverter" Reverse="False"/>
+        <local:StatusVisibilityConverter x:Key="ReversedStatusVisibilityConverter" Reverse="True"/>
+    </Window.Resources>
     <Grid>
-        <Button x:Name="btn1" Content="Button" HorizontalAlignment="Left" Margin="217,10,0,0" VerticalAlignment="Top" Width="75" Click="btn1_Click"/>
-        <ScrollViewer Margin="10,62,0,65" HorizontalAlignment="Left" Width="481">
-            <TextBlock x:Name="textBlock1" TextWrapping="Wrap" Text="" />
-        </ScrollViewer>
+        <Menu IsMainMenu="True" VerticalAlignment="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Open"/>
+                <MenuItem Header="Open"/>
+                <MenuItem Header="Open"/>
+            </MenuItem>
+            <MenuItem Header="About">
+                <MenuItem Header="Open"/>
+            </MenuItem>
+        </Menu>
 
+        <ScrollViewer Margin="10,89,10,0" Height="79" VerticalAlignment="Top">
+            <TextBlock x:Name="LogTextBlock" TextWrapping="Wrap" Text="" />
+        </ScrollViewer>
+        <DataGrid x:Name="FilesDataGrid" Margin="10,173,10,66" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="Cell" ItemsSource="{Binding Path=., Mode=OneWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Status" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <ProgressBar IsIndeterminate="False" Value="{Binding DownloadProgress}" Visibility="{Binding FileStatus, Converter={StaticResource StatusVisibilityConverter}}"/>
+                                <TextBlock Text="{Binding FileStatus}" Visibility="{Binding FileStatus, Converter={StaticResource ReversedStatusVisibilityConverter}}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Filename" Binding="{Binding Filename}"/>
+                <DataGridHyperlinkColumn Header="File URL" Binding="{Binding FileUrl}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <GroupBox Header="YouTube url" Height="61" Margin="10,23,10,0" VerticalAlignment="Top">
+            <Grid>
+                <TextBox x:Name="FileUrlTextBox" Height="20" Margin="10,10,90,0" TextWrapping="Wrap" VerticalAlignment="Top" ToolTip="Enter url to youtube video" Text="https://www.youtube.com/watch?v=SewpndxZDl0"/>
+                <Button x:Name="DownloadBtn" Content="Download" Margin="0,9,10,0" VerticalAlignment="Top" Click="DownloadBtn_Click" HorizontalAlignment="Right" Width="75"/>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>
