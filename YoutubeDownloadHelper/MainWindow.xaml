@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:YoutubeDownloadHelper"
         mc:Ignorable="d"
-        Title="YouTube Download Helper" Height="492.059" Width="720.588">
+        Title="YouTube Download Helper" Height="595" Width="720.588">
     <Window.Resources>
         <local:StatusVisibilityConverter x:Key="StatusVisibilityConverter" Reverse="False"/>
         <local:StatusVisibilityConverter x:Key="ReversedStatusVisibilityConverter" Reverse="True"/>
@@ -22,10 +22,11 @@
             </MenuItem>
         </Menu>
 
-        <ScrollViewer Margin="10,89,10,0" Height="79" VerticalAlignment="Top">
+        <ScrollViewer Margin="10,182,10,0" Height="79" VerticalAlignment="Top">
             <TextBlock x:Name="LogTextBlock" TextWrapping="Wrap" Text="" />
         </ScrollViewer>
-        <DataGrid x:Name="FilesDataGrid" Margin="10,173,10,66" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="Cell" ItemsSource="{Binding Path=., Mode=OneWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}">
+
+        <DataGrid x:Name="FilesDataGrid" Margin="10,312,10,10" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionUnit="Cell" ItemsSource="{Binding Path=., Mode=OneWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Status" Width="120">
                     <DataGridTemplateColumn.CellTemplate>
@@ -41,10 +42,18 @@
                 <DataGridHyperlinkColumn Header="File URL" Binding="{Binding FileUrl}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <GroupBox Header="YouTube url" Height="61" Margin="10,23,10,0" VerticalAlignment="Top">
+
+        <GroupBox Header="YouTube url" Height="60" Margin="10,23,10,0" VerticalAlignment="Top">
             <Grid>
                 <TextBox x:Name="FileUrlTextBox" Height="20" Margin="10,10,90,0" TextWrapping="Wrap" VerticalAlignment="Top" ToolTip="Enter url to youtube video" Text="https://www.youtube.com/watch?v=SewpndxZDl0"/>
-                <Button x:Name="DownloadBtn" Content="Download" Margin="0,9,10,0" VerticalAlignment="Top" Click="DownloadBtn_Click" HorizontalAlignment="Right" Width="75"/>
+                <Button x:Name="DownloadBtn" Content="Download" Margin="0,10,10,0" VerticalAlignment="Top" Click="DownloadBtn_Click" HorizontalAlignment="Right" Width="75" Height="20"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Download options" Height="89" Margin="10,88,10,0" VerticalAlignment="Top">
+            <Grid>
+                <ComboBox HorizontalAlignment="Left" Margin="118,10,0,0" VerticalAlignment="Top" Width="120"/>
+                <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
             </Grid>
         </GroupBox>
     </Grid>

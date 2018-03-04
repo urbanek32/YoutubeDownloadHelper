@@ -63,12 +63,12 @@ namespace YoutubeDownloadHelper
             await ProcessHelper.GetFileTitle(fileToAdd.FileUrl)
                 .ContinueWith(t =>
                 {
-                    var res = t.Result;
-                    fileToAdd.Filename = res;
-                    fileToAdd.FileStatus = FileStatus.Downloading;
+                    var title = t.Result;
+                    fileToAdd.Filename = title;
                 })
                 .ContinueWith(task =>
                 {
+                    fileToAdd.FileStatus = FileStatus.Downloading;
                     ProcessHelper.DownloadFile(fileToAdd);
                 });
         }

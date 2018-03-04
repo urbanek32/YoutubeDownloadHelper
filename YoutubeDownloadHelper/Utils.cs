@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace YoutubeDownloadHelper
 {
@@ -15,7 +10,9 @@ namespace YoutubeDownloadHelper
         {
             Debug.WriteLine(input);
 
+            // Find percent like 1.5% or 100%
             var pattern = @"(\d+(\.\d+)?%)";
+
             var match = Regex.Match(input, pattern);
             if (match.Success)
             {
